@@ -1,0 +1,11 @@
+/home/thiago-boas/
+├── django-DefectDojo/          # Aplicação Docker
+│   ├── docker-compose.yml
+│   └── [containers]
+└── security-scripts/           # SEUS scripts
+    ├── defectdojo/
+    │   ├── bulk_update.py
+    │   └── import_scan.py
+    ├── templates/
+    │   └── finding_template.md
+    └── config.json

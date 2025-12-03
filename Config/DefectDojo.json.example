@@ -1,0 +1,9 @@
+{
+  "defectdojo": {
+    "url": "http://localhost:8080",
+    "api_key": "SUA_API_KEY_AQUI",
+    "engagement_id": 2,
+    "product_id": 2,
+    "scan_type": "Nmap Scan"
+  }
+}

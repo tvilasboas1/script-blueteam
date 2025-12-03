@@ -1,0 +1,28 @@
+# Configurações sensíveis - NUNCA subir!
+Config/DefectDojo.json      # TEM SUA API KEY REAL!
+*.key
+*.pem
+*.env
+.env.local
+secrets/
+credentials/
+
+# Logs e temporários
+*.log
+*.tmp
+*.temp
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Scans grandes
+*.xml
+*.nmap
+scans/
+reports/
+
+# Sistema
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
