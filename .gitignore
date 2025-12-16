@@ -1,28 +1,33 @@
-# Configurações sensíveis - NUNCA subir!
-Config/DefectDojo.json      # TEM SUA API KEY REAL!
-*.key
-*.pem
-*.env
-.env.local
-secrets/
-credentials/
+# 🚫 ARQUIVOS SENSÍVEIS - NUNCA SUBIR PARA O GITHUB!
+Config/DefectDojo.json           # Suas credenciais secretas!
 
-# Logs e temporários
-*.log
-*.tmp
-*.temp
+# 🐍 Arquivos temporários do Python
 __pycache__/
 *.pyc
-.pytest_cache/
+*.pyo
 
-# Scans grandes
-*.xml
-*.nmap
-scans/
-reports/
+# 🗂️ Backups e arquivos temporários
+*.backup
+*.bak
+*.tmp
+*~
 
-# Sistema
-.DS_Store
-Thumbs.db
+# 🖥️ Arquivos do sistema
+.DS_Store       # Mac
+Thumbs.db       # Windows
+.desktop.ini    # Windows
+
+# 🔧 Arquivos de IDEs
 .vscode/
 .idea/
+*.swp
+
+# 📦 Virtual environments (ambientes Python)
+venv/
+env/
+.venv/
+
+# 📊 Logs e bancos de dados
+*.log
+*.sqlite3
+*.db

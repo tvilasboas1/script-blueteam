@@ -1,11 +1,61 @@
-/home/thiago-boas/
-├── django-DefectDojo/          # Aplicação Docker
-│   ├── docker-compose.yml
-│   └── [containers]
-└── security-scripts/           # SEUS scripts
-    ├── defectdojo/
-    │   ├── bulk_update.py
-    │   └── import_scan.py
-    ├── templates/
-    │   └── finding_template.md
-    └── config.json
+# 🛡️ ESTRUTURA DO PROJETO BLUETEAM
+## Versão: 1.0 | Autor: Thiago Boas | Data: $(date +%Y-%m-%d)
+
+## 📁 ESTRUTURA DE PASTAS
+
+
+Script BlueTeam/
+├── Config/
+│   └── DefectDojo.json
+|   └── DefectDojo.json.Backups
+|   └── DefectDojo.json.example
+├── DefectDojo/
+│   ├── analistadevulnerabilidades.py
+│   ├── projeto_mentor.py
+│   └── test_findings.py
+├── Templates/
+│   └── finding_critical.md
+|   └── config.example.json
+├── Scans/          
+├── Reports/       
+├── Backups/
+|   └── Scripts
+|       └── analistadevulnerabilidades1.py
+|       └── analistadevulnerabilidades.py.Backup
+|       └── analistadevulnerabilidades2.py
+|   └── Backup
+|
+└── projeto_mentor # Quando Executo o arquivo esta sendo criado automaticamente uma copia aqui.       
+└── Estrutura.Recomendada
+
+
+# 🛡️ ESTRUTURA DO PROJETO BLUETEAM
+
+## 📁 PASTAS PRINCIPAIS
+
+### Config/
+- `DefectDojo.json` → Credenciais da API (NUNCA compartilhar!)
+
+### DefectDojo/
+- `projeto_mentor.py` → Demonstração principal (funcional)
+- `analistadevulnerabilidades.py` → Script completo com menu
+- `test_findings.py` → Teste de conexão básico
+
+### Scans/
+- (Futuro) Arquivos .xml de scans (Nmap, Nessus, etc.)
+
+### Reports/
+- (Futuro) Relatórios gerados automaticamente
+
+### Templates/
+- Modelos para documentação
+
+### Backups/
+- Versões antigas dos scripts (segurança)
+
+## 🔧 COMO USAR
+
+1. Certifique-se que o DefectDojo está rodando:
+   ```bash
+   cd ~/django-DefectDojo
+   docker-compose up -d

@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """
 Script de Análise de Vulnerabilidades - DefectDojo
-Autor: Thiago Boas
-Versão: 1.1 - Corrigido e melhorado
+Versão: 2.1 - Corrigido e Simplificado
 """
-
-import os
+from datetime import datetime
 import json
 import requests
 from pathlib import Path
@@ -18,82 +16,64 @@ def carregar_configuracao():
     try:
         with open(config_path, 'r') as f:
             config = json.load(f)
-        print(f"✅ Configuração carregada: {config_path}")
+        print(f"✅ Configuração carregada de: {config_path}")
+        
+        # Mostrar configuração (ocultando API key)
+        api_key = config['defectdojo']['api_key']
+        masked_key = api_key[:8] + "..." + api_key[-8:] if len(api_key) > 16 else "***"
+        print(f"   URL: {config['defectdojo']['url']}")
+        print(f"   API Key: {masked_key}")
+        print(f"   Engagement ID: {config['defectdojo']['engagement_id']}")
+        
         return config
     except FileNotFoundError:
-        print(f"❌ Arquivo de configuração não encontrado: {config_path}")
-        print("📁 Crie o arquivo Config/DefectDojo.json")
+        print(f"❌ Arquivo não encontrado: {config_path}")
+        print("💡 Crie o arquivo Config/DefectDojo.json")
         return None
-    except json.JSONDecodeError as e:
-        print(f"❌ Erro no JSON: {str(e)}")
-        print("📝 Verifique a sintaxe do arquivo de configuração")
+    except Exception as e:
+        print(f"❌ Erro: {str(e)}")
         return None
 
 # ========== TESTE DE CONEXÃO ==========
 def testar_conexao(config):
-    """Testa conexão com API do DefectDojo - VERSÃO MELHORADA"""
-    print("\n🔗 Testando conexão com DefectDojo...")
+    """Testa conexão com API do DefectDojo"""
+    print("\n🔗 Testando conexão com API...")
     
-    # Tentar vários endpoints para maior robustez
-    endpoints = [
-        "/api/v2/users/current/",  # Usuário atual
-        "/api/v2/users/",          # Lista de usuários
-        "/api/v2/engagements/",    # Lista de engagements
-    ]
-    
+    url = f"{config['defectdojo']['url']}/api/v2/findings/"
     headers = {'Authorization': f"Token {config['defectdojo']['api_key']}"}
+    params = {'limit': 1}
     
-    for endpoint in endpoints:
-        try:
-            url = f"{config['defectdojo']['url']}{endpoint}"
-            resposta = requests.get(url, headers=headers, verify=False, timeout=5)
+    try:
+        resposta = requests.get(url, headers=headers, params=params, verify=False, timeout=10)
+        
+        if resposta.status_code == 200:
+            dados = resposta.json()
+            print(f"✅ Conexão OK!")
+            print(f"📊 Total de findings: {dados.get('count', 0)}")
+            print(f"🌐 API: {config['defectdojo']['url']}")
+            return True
+        else:
+            print(f"❌ Erro {resposta.status_code}")
+            print(f"💡 Mensagem: {resposta.text[:100]}")
+            return False
             
-            if resposta.status_code == 200:
-                dados = resposta.json()
-                
-                if endpoint == "/api/v2/users/current/":
-                    print(f"✅ Conexão OK! Usuário: {dados.get('username', 'N/A')}")
-                    print(f"📧 Email: {dados.get('email', 'N/A')}")
-                elif endpoint == "/api/v2/engagements/":
-                    eng_count = dados.get('count', 0)
-                    print(f"📁 Engagements: {eng_count} disponíveis")
-                elif endpoint == "/api/v2/users/":
-                    user_count = dados.get('count', 0)
-                    print(f"👥 Usuários: {user_count} no sistema")
-                
-                print(f"🌐 Endpoint testado: {endpoint}")
-                print(f"📊 Status: {resposta.status_code}")
-                return True
-                
-        except Exception as e:
-            continue
-    
-    print("❌ Não foi possível conectar a nenhum endpoint")
-    print("💡 Verifique:")
-    print("  1. DefectDojo está rodando? (docker-compose ps)")
-    print("  2. API key está correta?")
-    print("  3. URL está correta?")
-    return False
+    except Exception as e:
+        print(f"❌ Erro: {str(e)}")
+        return False
 
 # ========== LISTAR VULNERABILIDADES ==========
 def listar_vulnerabilidades_criticas(config):
-    """Lista vulnerabilidades CRÍTICAS do engagement - VERSÃO CORRIGIDA 2.0"""
-    print("🚨 DEBUG: Função listar_vulnerabilidades_criticas CHAMADA!")  # ← ADICIONAR
-    print("\n🔍 Buscando vulnerabilidades CRÍTICAS...")
+    """Lista vulnerabilidades CRÍTICAS"""
     print("\n🔍 Buscando vulnerabilidades CRÍTICAS...")
     
     url = f"{config['defectdojo']['url']}/api/v2/findings/"
-    headers = {
-        'Authorization': f"Token {config['defectdojo']['api_key']}"
-    }
+    headers = {'Authorization': f"Token {config['defectdojo']['api_key']}"}
     
-    # Parâmetros: críticas, ativas, do seu engagement
     params = {
         'severity': 'Critical',
         'active': 'true',
         'engagement': config['defectdojo']['engagement_id'],
-        'limit': 20,
-        'prefetch': 'endpoints'  # Isso pode não funcionar como esperado
+        'limit': 10
     }
     
     try:
@@ -104,118 +84,141 @@ def listar_vulnerabilidades_criticas(config):
             findings = dados.get('results', [])
             
             if findings:
-                print(f"🎯 Encontradas {len(findings)} vulnerabilidades CRÍTICAS:")
+                print(f"\n🎯 {len(findings)} VULNERABILIDADES CRÍTICAS ENCONTRADAS:")
                 print("=" * 80)
-                
-                # PRIMEIRO: Buscar endpoints separadamente
-                endpoints_url = f"{config['defectdojo']['url']}/api/v2/endpoints/"
-                endpoints_resp = requests.get(endpoints_url, headers=headers, verify=False, timeout=5)
-                endpoints_map = {}
-                
-                if endpoints_resp.status_code == 200:
-                    endpoints_data = endpoints_resp.json()
-                    for endpoint in endpoints_data.get('results', []):
-                        endpoints_map[endpoint['id']] = endpoint
-                
                 for i, finding in enumerate(findings, 1):
-                    # Extrair informações básicas
-                    title = finding.get('title', 'Sem título')[:70]
-                    finding_id = finding.get('id', 'N/A')
-                    cve = finding.get('cve', 'Sem CVE')
-                    
-                    # Tratar endpoints (pode ser lista de IDs ou objetos)
-                    endpoint_info = "N/A"
-                    endpoints = finding.get('endpoints', [])
-                    
-                    if endpoints:
-                        if isinstance(endpoints[0], dict):
-                            # Já tem objetos completos
-                            endpoint_obj = endpoints[0]
-                            endpoint_info = endpoint_obj.get('host', 'N/A')
-                            if endpoint_obj.get('port'):
-                                endpoint_info += f":{endpoint_obj.get('port')}"
-                        else:
-                            # São IDs numéricos [1, 2, 3]
-                            endpoint_ids = endpoints
-                            if endpoint_ids and endpoint_ids[0] in endpoints_map:
-                                endpoint_obj = endpoints_map[endpoint_ids[0]]
-                                endpoint_info = endpoint_obj.get('host', 'N/A')
-                                if endpoint_obj.get('port'):
-                                    endpoint_info += f":{endpoint_obj.get('port')}"
-                    
-                    # Status
-                    is_active = finding.get('active', False)
-                    status = "ACTIVE" if is_active else "INACTIVE"
-                    severity = finding.get('severity', 'Critical')
-                    
-                    # Exibir formatado
-                    print(f"{i:2d}. ID: {finding_id} | {status} | {severity}")
-                    print(f"    📛 {title}")
-                    
-                    if cve != 'Sem CVE':
-                        print(f"    🎯 CVE: {cve}")
-                    
-                    print(f"    🌐 Host: {endpoint_info}")
-                    
-                    # Mostrar se tem patch disponível
-                    if finding.get('fix_available'):
-                        print(f"    ✅ Patch disponível: Sim")
-                    
-                    # Mostrar data de publicação
-                    publish_date = finding.get('publish_date')
-                    if publish_date:
-                        print(f"    📅 Publicado: {publish_date}")
-                    
-                    print(f"    🔗 URL: {config['defectdojo']['url']}/finding/{finding_id}")
-                    print("-" * 80)
-                    
-                print(f"\n📊 Resumo: {len(findings)} vulnerabilidades críticas encontradas")
-                
+                    print(f"{i:2d}. [{finding.get('id')}] {finding.get('title')}")
+                    print(f"     CVE: {finding.get('cve', 'N/A')}")
+                    print(f"     Status: {'ACTIVE' if finding.get('active') else 'INACTIVE'}")
+                    print(f"     Severity: {finding.get('severity')}")
+                    print()
             else:
-                print("📭 Nenhuma vulnerabilidade CRÍTICA encontrada.")
-                print(f"\n💡 Engagement ID atual: {config['defectdojo']['engagement_id']}")
-                print("   Para listar TODOS os findings (de todos engagements):")
-                print(f"   curl -H 'Authorization: Token {config['defectdojo']['api_key'][:10]}...' \\")
-                print(f"     '{config['defectdojo']['url']}/api/v2/findings/?severity=Critical'")
-                
+                print("📭 Nenhuma vulnerabilidade crítica encontrada.")
         else:
-            print(f"❌ Erro na API: {resposta.status_code}")
-            print(f"📄 Resposta: {resposta.text[:200]}...")
+            print(f"❌ Erro {resposta.status_code}: {resposta.text[:100]}")
             
     except Exception as e:
         print(f"❌ Erro: {str(e)}")
-        import traceback
-        traceback.print_exc()  # Mostra detalhes do erro
-# ========== BULK UPDATE ==========
-def bulk_update_findings(config):
-    """Atualiza múltiplos findings de uma vez"""
-    print("\n🔄 Bulk update de findings...")
-    print("⚠️  Esta funcionalidade ainda está em desenvolvimento")
-    print("\n📋 Funcionalidades planejadas:")
-    print("  1. Atualizar status para 'Mitigated'")
-    print("  2. Adicionar notas padronizadas")
-    print("  3. Fechar findings antigos")
-    print("  4. Exportar relatório")
-    
-    # TODO: Implementar lógica de bulk update
-    print("\n📝 Para agora, use a interface web do DefectDojo:")
-    print(f"   {config['defectdojo']['url']}/finding")
 
-# ========== IMPORTAR SCAN ==========
-def importar_scan_nmap(config):
-    """Importa arquivo de scan NMAP para o DefectDojo"""
-    print("\n📤 Importando scan NMAP...")
-    print("⚠️  Esta funcionalidade ainda está em desenvolvimento")
+# ========== BULK UPDATE CORRIGIDO ==========
+def bulk_update_findings(config):
+    """Atualiza múltiplos findings - VERSÃO CORRIGIDA"""
+    print("\n🔄 Bulk Update de Findings")
+    print("="*50)
     
-    # TODO: Implementar importação de scan
-    print("\n📋 Como usar manualmente:")
-    print("  1. Gere XML do NMAP: sudo nmap -sS -sV -oX scan.xml 192.168.15.0/24")
-    print("  2. Use a API diretamente:")
-    print(f"     curl -X POST -H 'Authorization: Token {config['defectdojo']['api_key'][:10]}...' \\")
-    print(f"       -F 'engagement={config['defectdojo']['engagement_id']}' \\")
-    print(f"       -F 'scan_type=Nmap Scan' \\")
-    print(f"       -F 'file=@scan.xml' \\")
-    print(f"       {config['defectdojo']['url']}/api/v2/import-scan/")
+    # Buscar findings
+    print("🔍 Buscando findings ativos...")
+    url = f"{config['defectdojo']['url']}/api/v2/findings/"
+    headers = {'Authorization': f"Token {config['defectdojo']['api_key']}"}
+    
+    params = {
+        'active': 'true',
+        'engagement': config['defectdojo']['engagement_id'],
+        'limit': 20  # Aumentei para 20
+    }
+    
+    try:
+        response = requests.get(url, headers=headers, params=params, verify=False, timeout=10)
+        
+        if response.status_code != 200:
+            print(f"❌ Erro ao buscar findings: {response.status_code}")
+            return
+        
+        findings = response.json().get('results', [])
+        
+        if not findings:
+            print("📭 Nenhum finding ativo encontrado.")
+            return
+        
+        print(f"📊 Encontrados {len(findings)} findings ativos")
+        
+        # Menu
+        print("\n🎯 O que deseja fazer?")
+        print("1. Marcar como 'Mitigated' (com nota)")
+        print("2. Marcar como 'Fixed' (corrigido)")
+        print("3. Fechar findings (active=False)")
+        print("4. Voltar ao menu")
+        
+        opcao = input("\nEscolha (1-4): ").strip()
+        
+        if opcao == '4':
+            return
+        
+        # Processar
+        atualizados = 0
+        errors = 0
+        
+        for i, finding in enumerate(findings, 1):
+            finding_id = finding['id']
+            
+            if opcao == '1':  # Mitigated
+                update_data = {
+                    "status": "Mitigated",
+                    "notes": f"Mitigado via script em {datetime.now().date()}",
+                    "active": False
+                }
+            elif opcao == '2':  # Fixed
+                update_data = {
+                    "status": "Fixed", 
+                    "active": False
+                }
+            elif opcao == '3':  # Fechar
+                update_data = {"active": False}
+            else:
+                print("❌ Opção inválida")
+                return
+            
+            # Atualizar
+            update_url = f"{config['defectdojo']['url']}/api/v2/findings/{finding_id}/"
+            try:
+                update_response = requests.patch(
+                    update_url, 
+                    headers=headers, 
+                    json=update_data, 
+                    verify=False,
+                    timeout=5
+                )
+                
+                if update_response.status_code in [200, 204]:
+                    atualizados += 1
+                    print(f"✅ {atualizados}/{len(findings)} - ID {finding_id}")
+                else:
+                    errors += 1
+                    
+            except Exception as e:
+                errors += 1
+        
+        print(f"\n{'='*50}")
+        print(f"🎉 CONCLUSÃO:")
+        print(f"✅ {atualizados} findings atualizados")
+        print(f"❌ {errors} erros")
+        
+    except Exception as e:
+        print(f"❌ Erro no bulk update: {str(e)}")
+
+# ========== IMPORTAR SCAN NMAP ==========
+def importar_scan_nmap(config):
+    """Importa arquivo de scan NMAP"""
+    print("\n📤 Importar Scan NMAP")
+    print("="*50)
+    
+    # Pedir caminho do arquivo
+    xml_path = input("Caminho do arquivo XML do NMAP: ").strip()
+    
+    if not xml_path:
+        print("❌ Caminho vazio. Cancelado.")
+        return
+    
+    if not Path(xml_path).exists():
+        print(f"❌ Arquivo não existe: {xml_path}")
+        return
+    
+    print(f"📁 Arquivo: {xml_path}")
+    print("📤 Enviando para DefectDojo...")
+    
+    # Aqui você implementaria o upload real
+    print("⚠️  Funcionalidade em desenvolvimento")
+    print(f"💡 Use: curl -X POST {config['defectdojo']['url']}/api/v2/import-scan/")
 
 # ========== MENU PRINCIPAL ==========
 def mostrar_menu():
@@ -231,18 +234,16 @@ def mostrar_menu():
     print("="*50)
     
     try:
-        opcao = input("Escolha uma opção (1-5): ").strip()
+        opcao = input("Escolha (1-5): ").strip()
         return opcao
-    except KeyboardInterrupt:
-        print("\n\n👋 Até logo!")
-        return '5'
-    except EOFError:
-        print("\n\n👋 Até logo!")
+    except:
         return '5'
 
 # ========== PROGRAMA PRINCIPAL ==========
 def main():
-    print("🔄 Inicializando Script Blueteam...")
+    print("\n" + "="*50)
+    print("🔄 Inicializando Script Blueteam DefectDojo")
+    print("="*50)
     
     # Carregar configuração
     config = carregar_configuracao()
@@ -273,10 +274,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-    #Testando a linha 277 para ver se o Commit vai funcionar corretamente.  
-
-
-
-
-    ##
