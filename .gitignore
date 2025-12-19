@@ -47,3 +47,6 @@ env/
 *.log
 *.sqlite3
 *.db
+Config/
+.env
+*.secret
