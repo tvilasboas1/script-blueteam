@@ -1,5 +1,21 @@
 # 🚫 ARQUIVOS SENSÍVEIS - NUNCA SUBIR PARA O GITHUB!
 Config/DefectDojo.json           # Suas credenciais secretas!
+Config/DefectDojo.json
+Config/*.json
+*.key
+*.token
+
+# PYTHON
+__pycache__/
+*.pyc
+*.pyo
+
+# VSCODE
+.vscode/
+
+# SISTEMA
+.DS_Store
+Thumbs.db
 
 # 🐍 Arquivos temporários do Python
 __pycache__/

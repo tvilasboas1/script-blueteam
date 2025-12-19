@@ -8,43 +8,45 @@ import json
 import requests
 import os
 os.system("")
+
 BOLD = "\033[1m"
 RED = "\033[91m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 BLUE = "\033[94m"
 RESET = "\033[0m"
+ORANGE = "\033[38;5;208m"
 
 def main():
-    print("="*60)
+    print(f"{RED}="*60)
     print(f"{BOLD}{RED}SCRIPT BLUETEAM - DEFECTDOJO INTEGRATION{RESET}")
-    print("="*60)
+    print(f"{RED}={RESET}"*60)
     
     # 1. Carregar configuração
-    print("\nCARREGANDO CONFIGURAÇÃO...")
+    print(f"{BOLD}\nCARREGANDO CONFIGURAÇÃO...")
     
     # Caminho CORRETO: a partir da pasta onde este script está
     script_dir = os.path.dirname(os.path.abspath(__file__))
     config_path = os.path.join(script_dir, '..', 'Config', 'DefectDojo.json')
     
-    print(f"Caminho do config: {config_path}")
+    #print(f"Caminho do config: {config_path}")
     
     try:
         with open(config_path, 'r') as f:
             config = json.load(f)
-        print("Configuração carregada com sucesso")
+        print(f"{GREEN}Configuração carregada com sucesso{RESET}")
     except Exception as e:
-        print(f"Erro ao carregar configuração: {e}")
+        print(f"{RED}Erro ao carregar configuração: {e}")
         print("\nVERIFIQUE:")
         print(f"1. O arquivo existe? ls {config_path}")
-        print(f"2. Permissões corretas?")
+        print(f"2. Permissões corretas?{RESET}")
         return
     
     dd = config['defectdojo']
-    print(f"\nCONFIGURAÇÃO CARREGADA:")
+    print(f"\n{GREEN}CONFIGURAÇÃO CARREGADA:")
     print(f"   • URL: {dd['url']}")
     print(f"   • Engagement ID: {dd['engagement_id']}")
-    print(f"   • API Key: {dd['api_key'][:8]}...{dd['api_key'][-8:]}")
+    print(f"   • API Key: {dd['api_key'][:8]}...{dd['api_key'][-8:]}{RESET}")
     
     # 2. Testar conexão
     print("\nTESTANDO CONEXÃO COM API...")
@@ -67,7 +69,7 @@ def main():
         return
     
     # 3. Buscar vulnerabilidades
-    print("\n3  ANALISANDO VULNERABILIDADES...")
+    print("\nANALISANDO VULNERABILIDADES...")
     findings_url = f"{dd['url']}findings/"
     params = {'engagement': dd['engagement_id'], 'limit': 50}
     
@@ -82,19 +84,29 @@ def main():
             
             # Contar por severidade
             severities = ['Critical', 'High', 'Medium', 'Low', 'Info']
-            print(f"\n DISTRIBUIÇÃO POR GRAVIDADE:")
+            severity_colors = {
+                'Critical': RED,
+                'High': ORANGE,
+                'Medium': YELLOW,
+                'Low': GREEN,
+                'Info': BLUE
+            }
+
+            print(f"\n{BOLD}DISTRIBUIÇÃO POR GRAVIDADE:{RED}")
             for severity in severities:
                 params['severity'] = severity
                 r_sev = requests.get(findings_url, headers=headers, params=params, verify=False)
+    
                 if r_sev.status_code == 200:
                     count = r_sev.json().get('count', 0)
                     if count > 0:
                         bar = "█" * min(count, 20)  # Barra gráfica
-                        print(f"   • {severity:8s}: {count:3d} {bar}")
+                        color = severity_colors[severity]
+                        print(f"   • {color}{severity:8s}:{RESET} {count:3d} {color}{bar}{RESET}")
             
             # Mostrar exemplos
             if total > 0:
-                print(f"\nEXEMPLOS DE VULNERABILIDADES (3 primeiras):")
+                print(f"\n{BOLD}EXEMPLOS DE VULNERABILIDADES (3 primeiras):{RESET}")
                 print("   " + "-"*50)
                 for i, vuln in enumerate(data.get('results', [])[:3], 1):
                     print(f"\n   {i}. {vuln.get('title', 'Sem título')[:70]}...")
