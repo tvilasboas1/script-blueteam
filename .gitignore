@@ -1,52 +1,54 @@
-# 🚫 ARQUIVOS SENSÍVEIS - NUNCA SUBIR PARA O GITHUB!
-Config/DefectDojo.json           # Suas credenciais secretas!
+# ==========================================
+#  DADOS SENSÍVEIS (NUNCA SUBIR!)
+# ==========================================
 Config/DefectDojo.json
-Config/*.json
+Config/DefectDojo.json.Backups
 *.key
 *.token
+.env
+*.secret
 
-# PYTHON
+# ==========================================
+#  DADOS DO PROJETO E PRIVACIDADE
+# ==========================================
+# Ignora os scans reais para não vazar a rede interna
+Scans/*.xml
+# Ignora a pasta inteira de backups locais
+Backups/
+
+# ==========================================
+#  PYTHON E AMBIENTES VIRTUAIS
+# ==========================================
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
 
-# VSCODE
-.vscode/
-
-# SISTEMA
+# ==========================================
+#  SISTEMA OPERACIONAL E IDEs
+# ==========================================
 .DS_Store
 Thumbs.db
+.desktop.ini
+.vscode/
+.idea/
+*.swp
 
-# 🐍 Arquivos temporários do Python
-__pycache__/
-*.pyc
-*.pyo
-
-# 🗂️ Backups e arquivos temporários
+# ==========================================
+#  LOGS E TEMPORÁRIOS
+# ==========================================
+*.log
+*.sqlite3
+*.db
 *.backup
 *.bak
 *.tmp
 *~
 
-# 🖥️ Arquivos do sistema
-.DS_Store       # Mac
-Thumbs.db       # Windows
-.desktop.ini    # Windows
-
-# 🔧 Arquivos de IDEs
-.vscode/
-.idea/
-*.swp
-
-# 📦 Virtual environments (ambientes Python)
-venv/
-env/
-.venv/
-
-# 📊 Logs e bancos de dados
-*.log
-*.sqlite3
-*.db
-Config/
-.env
-*.secret
+# ==========================================
+# 🛑 ANOTAÇÕES PESSOAIS E RASCUNHOS
+# ==========================================
+Estrutura.Recomendada
+Aula_Arquitetura.txt

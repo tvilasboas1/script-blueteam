@@ -1,0 +1,56 @@
+	# ARQUIVOS SENSÍVEIS - NUNCA SUBIR PARA O GITHUB!
+	Config/DefectDojo.json           # Suas credenciais secretas!
+	Config/*.json
+	*.key
+	*.token
+
+	# PYTHON
+	__pycache__/
+	*.pyc
+	*.pyo
+
+	# VSCODE
+	.vscode/
+
+	# SISTEMA
+	Backups/
+	__pycache__/
+	.DS_Store
+	Thumbs.db
+
+	# Arquivos temporários do Python
+	__pycache__/
+	*.pyc
+	*.pyo
+
+	# Dados de Scan (Privacidade da Rede )
+	Scans/*.xml
+
+	# Backups e arquivos temporários
+	*.backup
+	*.bak
+	*.tmp
+	*~
+
+	# Arquivos do sistema
+	.DS_Store       # Mac
+	Thumbs.db       # Windows
+	.desktop.ini    # Windows
+
+	#Arquivos de IDEs
+	.vscode/
+	.idea/
+	*.swp
+
+	#Virtual environments (ambientes Python)
+	venv/
+	env/
+	.venv/
+
+	#Logs e bancos de dados
+	*.log
+	*.sqlite3
+	*.db
+	Config/
+	.env
+	*.secret
