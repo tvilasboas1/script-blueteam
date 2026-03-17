@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)
 ![DefectDojo](https://img.shields.io/badge/Integração-DefectDojo-orange)
 
-Este projeto foi desenvolvido como parte da Residência Tecnológica em Cibersegurança da **RNP** (Rede Nacional de Ensino e Pesquisa) para ser e aplicado no ambiente corporativo do POP-BA e também da **Universidade Federal da Bahia (UFBA)**.
+Este projeto foi desenvolvido como parte da Residência Tecnológica em Cibersegurança da **RNP** (Rede Nacional de Ensino e Pesquisa) para ser e aplicado no ambiente corporativo do **POP-BA** e também da **Universidade Federal da Bahia (UFBA)**.
 
 ## 🎯 Objetivo Corporativo
 O script atua como uma ponte automatizada no processo de Gestão de Vulnerabilidades. Ele ingere resultados brutos de scanners de rede (como o Nmap), processa os dados e os injeta automaticamente via API na plataforma centralizada de gestão (DefectDojo). 
@@ -70,5 +70,5 @@ python3 DefectDojo/analistadevulnerabilidades.py
 
 ## 👨‍💻 Autor
 
-**Thiago Santos Vilas Boas** *Analista de Cibersegurança (Blue Team)* - [LinkedIn](LINK_DO_SEU_LINKEDIN_AQUI)
-- Projeto desenvolvido para a RNP e UFBA.
+**Thiago Santos Vilas Boas** *Analista de Cibersegurança (Blue Team)* - [LinkedIn](https://www.linkedin.com/in/thiago-s-vilas-boas-696107b5/)
+- Projeto desenvolvido para a RNP e UFBA.  
