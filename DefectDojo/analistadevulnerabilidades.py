@@ -16,6 +16,8 @@ para otimização de processos de Blue Team.
 from datetime import datetime
 import json
 import requests
+import xml
+import os
 from pathlib import Path
 
 # ========== CONFIGURAÇÃO ==========

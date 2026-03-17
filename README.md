@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3.8+-blue)
 ![DefectDojo](https://img.shields.io/badge/Integração-DefectDojo-orange)
 
-Este projeto foi desenvolvido como parte da Residência Tecnológica em Cibersegurança da **RNP** (Rede Nacional de Ensino e Pesquisa) e aplicado no ambiente corporativo da **Universidade Federal da Bahia (UFBA)**.
+Este projeto foi desenvolvido como parte da Residência Tecnológica em Cibersegurança da **RNP** (Rede Nacional de Ensino e Pesquisa) para ser e aplicado no ambiente corporativo do POP-BA e também da **Universidade Federal da Bahia (UFBA)**.
 
 ## 🎯 Objetivo Corporativo
 O script atua como uma ponte automatizada no processo de Gestão de Vulnerabilidades. Ele ingere resultados brutos de scanners de rede (como o Nmap), processa os dados e os injeta automaticamente via API na plataforma centralizada de gestão (DefectDojo). 
@@ -37,7 +37,7 @@ Siga os passos abaixo para colocar a automação para rodar no seu ambiente:
 ### Passo 1: Download do Projeto
 Faça o clone do repositório para a sua máquina e entre na pasta:
 ```bash
-git clone [https://github.com/tvilasboas1/script-blueteam.git](https://github.com/tvilasboas1/script-blueteam.git)
+git clone https://github.com/tvilasboas1/script-blueteam.git
 cd script-blueteam
 ```
 
