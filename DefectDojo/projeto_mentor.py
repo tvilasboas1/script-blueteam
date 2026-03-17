@@ -100,7 +100,7 @@ def main():
                 if r_sev.status_code == 200:
                     count = r_sev.json().get('count', 0)
                     if count > 0:
-                        bar = "█" * min(count, 20)  # Barra gráfica
+                        bar = " " * min(count, 20)  # Barra gráfica
                         color = severity_colors[severity]
                         print(f"   • {color}{severity:8s}:{RESET} {count:3d} {color}{bar}{RESET}")
             

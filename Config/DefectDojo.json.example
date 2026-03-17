@@ -1,7 +1,7 @@
 {
   "defectdojo": {
     "url": "http://localhost:8080",
-    "api_key": "SUA_API_KEY_AQUI",
+    "api_key": "API_KEY",
     "engagement_id": 2,
     "product_id": 2
   }

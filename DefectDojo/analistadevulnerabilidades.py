@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 """
-Script de Análise de Vulnerabilidades - DefectDojo
-Versão: 2.1 - Corrigido e Simplificado
+Automação de Gestão de Vulnerabilidades (Blue Team)
+Integração de Scanners de Rede com DefectDojo via API.
+
+Autor: Thiago Santos Vilas Boas
+Projeto: Residência Tecnológica em Cibersegurança (RNP / UFBA)
+Versão: 1.0
+
+Este script é de propriedade intelectual do autor e foi desenvolvido
+para otimização de processos de Blue Team.
 """
+
 from datetime import datetime
 import json
 import requests
@@ -40,7 +50,7 @@ def carregar_configuracao():
 # ========== TESTE DE CONEXÃO ==========
 def testar_conexao(config):
     """Testa conexão com API do DefectDojo"""
-    print("\n🔗 Testando conexão com API...")
+    print("\n Testando conexão com API...")
     
     # PROGRAMAÇÃO DEFENSIVA: Remove barras extras e evita duplicação do /api/v2
     url_base = config['defectdojo']['url'].replace('/api/v2/', '').replace('/api/v2', '').rstrip('/')
